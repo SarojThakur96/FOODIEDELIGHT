@@ -18,9 +18,7 @@ function App() {
           <Header />
         </div>
         <div className="px-6 pt-4 ">
-          <div className="space-y-4 w-full px-4 relative">
-            <Home />
-          </div>
+          <Home />
         </div>
       </div>
     </div>

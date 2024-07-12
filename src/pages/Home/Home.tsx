@@ -4,8 +4,8 @@ import { Spinner } from "react-activity";
 import { Tooltip } from "@mui/material";
 import { getAllRestaurants } from "../../api/getAllRestaurants";
 import { RestaurantsType } from "../../types/types";
-// import { ReactComponent as DeleteIcon } from "../../assets/DeleteIcon.svg";
-// import { ReactComponent as EditIconGrid } from "../../assets/EditIconGrid.svg";
+import DeleteIcon from "../../assets/DeleteIcon.svg";
+import EditIconGrid from "../../assets/EditIconGrid.svg";
 const Home = () => {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState<RestaurantsType[]>([]);
@@ -33,33 +33,68 @@ const Home = () => {
     },
     { id: "action", label: "Action", minWidth: 130, align: "center" },
   ];
+  const createData = (item: any, index: number) => {
+    const Title = (
+      <div>
+        <h1
+          className="underline decoration-blue-[#0061bb] text-[#0061bb] cursor-pointer "
+          onClick={() => {
+            setModalValue(item);
+            setShowModal(true);
+            setModalType("edit");
+            // View and Edit Modal
+          }}
+        >
+          {item?.title}
+        </h1>
+      </div>
+    );
+    const action = (
+      <div className="flex space-x-[10px] justify-center ">
+        {/* EditIconGrid */}
+        <Tooltip title="Edit" placement="bottom">
+          <img
+            src={EditIconGrid}
+            className="cursor-pointer w-4 h-4"
+            onClick={() => {
+              setModalType("Edit");
+              // setModalValue(item);
+              setShowModal(true);
+            }}
+          />
+        </Tooltip>
+        <Tooltip title="Delete" placement="bottom">
+          {/* Call the delete function  */}
+          <img
+            src={DeleteIcon}
+            className="cursor-pointer w-4 h-4"
+            onClick={() => {
+              setShowDrawer(true);
+              setModalType("delete");
+              // setModalValue(item);
+            }}
+          />
+        </Tooltip>
+      </div>
+    );
 
-  // const action = (
-  //   <div className="flex space-x-[10px] justify-center ">
-  //     {/* EditIconGrid */}
-  //     <Tooltip title="Edit" placement="bottom">
-  //       <EditIconGrid
-  //         className="cursor-pointer w-4 h-4"
-  //         onClick={() => {
-  //           setModalType("Edit");
-  //           // setModalValue(item);
-  //           setShowModal(true);
-  //         }}
-  //       />
-  //     </Tooltip>
-  //     <Tooltip title="Delete" placement="bottom">
-  //       {/* Call the delete function  */}
-  //       <DeleteIcon
-  //         className="cursor-pointer w-4 h-4"
-  //         onClick={() => {
-  //           setShowDrawer(true);
-  //           setModalType("delete");
-  //           // setModalValue(item);
-  //         }}
-  //       />
-  //     </Tooltip>
-  //   </div>
-  // );
+    return {
+      key: item?.id,
+      idx: index + 1,
+      Brands: item?.brand_name,
+      address: item?.address,
+      type: item?.loyalty_type_name,
+
+      title: Title,
+      action,
+      isActive: item?.is_active,
+      ...item,
+    };
+  };
+
+  const rows = [
+    ...data?.map((item: any, index: number) => createData(item, index)),
+  ];
 
   const gWidth =
     window.screen.height > 864
@@ -87,33 +122,46 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="w-full flex-grow   border-[1px] border-t-[##D7D4D4] rounded-2xl">
-      {isLoading ? (
-        <div className="h-32 items-center justify-center flex">
-          <Spinner size={20} color="red" />
+    <div>
+      <div className="space-y-4 w-full px-4 relative">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-AvenirLTProHeavy">Restaurants</h1>
+          <h1 className="text-sm font-AvenirLTProHeavy text-[#8B8B8B] flex">
+            <span className="text-black flex items-center ">
+              <div className="w-2 h-2 bg-black rounded-full mx-2" /> Restaurants
+            </span>
+          </h1>
         </div>
-      ) : (
-        <CustomGrid
-          columns={columns}
-          rows={data}
-          gWidth={gWidth}
-          itemPerPage={currentPageInfo.itemPerPage}
-          count={currentPageInfo?.totalItem}
-          handleChangePageUrUpdate={(e) => {
-            setCurrentPageInfo((prev) => ({ ...prev, pageNo: e + 1 }));
-            setReload(reload + 1);
-          }}
-          givenPage={currentPageInfo?.pageNo}
-          handlerRowsPerPage={(e) => {
-            setCurrentPageInfo((prev) => ({
-              ...prev,
-              itemPerPage: Number(e),
-              pageNo: 1,
-            }));
-            setReload(reload + 1);
-          }}
-        />
-      )}
+
+        <div className="w-full flex-grow   border-[1px] border-t-[##D7D4D4] rounded-2xl">
+          {isLoading ? (
+            <div className="h-32 items-center justify-center flex">
+              <Spinner size={20} color="red" />
+            </div>
+          ) : (
+            <CustomGrid
+              columns={columns}
+              rows={rows}
+              gWidth={gWidth}
+              itemPerPage={currentPageInfo.itemPerPage}
+              count={currentPageInfo?.totalItem}
+              handleChangePageUrUpdate={(e) => {
+                setCurrentPageInfo((prev) => ({ ...prev, pageNo: e + 1 }));
+                setReload(reload + 1);
+              }}
+              givenPage={currentPageInfo?.pageNo}
+              handlerRowsPerPage={(e) => {
+                setCurrentPageInfo((prev) => ({
+                  ...prev,
+                  itemPerPage: Number(e),
+                  pageNo: 1,
+                }));
+                setReload(reload + 1);
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
