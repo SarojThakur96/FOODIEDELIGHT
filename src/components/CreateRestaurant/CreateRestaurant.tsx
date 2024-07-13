@@ -6,11 +6,12 @@ import { ErrorMessage, Formik } from "formik";
 import { object, string } from "yup";
 
 import { v4 as uuid } from "uuid";
+import { RestaurantsType } from "../../types/types";
 
 type Props = {
   onClose: (status?: string) => void;
   headingText?: string;
-  modalValue?: any;
+  modalValue?: RestaurantsType | undefined | null;
 };
 
 const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
@@ -18,10 +19,7 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
 
   const initialValues = {
     name: modalValue?.name || "",
-    brand: {
-      label: modalValue?.brand_name || "",
-      code: modalValue?.brand_id || "",
-    },
+    description: modalValue?.description,
     address: modalValue?.address || "",
     latitude: modalValue?.latitude || "",
     longitude: modalValue?.longitude || "",
@@ -29,13 +27,10 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
 
   const validationSchema = object({
     name: string().required("Name is required"),
-    brand: object({
-      label: string().required(),
-      code: string().required(),
-    }),
-    address: string().required(),
-    latitude: string().required(),
-    longitude: string().required(),
+    description: string().required("Description is required"),
+    address: string().required("Address is required"),
+    latitude: string().required("Latitude is required"),
+    longitude: string().required("Longitude is required"),
   });
 
   const _onSubmitHandler = async (formValues: any) => {
@@ -100,9 +95,9 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
           <div className="px-6 ">
             <div className="grid grid-cols-3 py-3  gap-4">
               {/* Input name */}
-              <div className="flex flex-grow flex-col col-span-2">
+              <div className="flex flex-grow flex-col col-span-1">
                 <h1 className="text-black font-AvenirLTProHeavy text-[13px]">
-                  Store Name <span className="text-red-600">*</span>
+                  Restaurants Name <span className="text-red-600">*</span>
                 </h1>
                 <input
                   disabled={is_disable}
@@ -121,27 +116,33 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
                   style={{ color: "red" }}
                 />
               </div>
-              <div className="">
+              <div className="flex flex-grow flex-col col-span-2">
                 <h1 className="text-black font-AvenirLTProHeavy text-[13px]">
-                  Brand Name<span className="text-red-600">*</span>
+                  Description<span className="text-red-600">*</span>
                 </h1>
 
                 <input
                   disabled={is_disable}
                   onChange={handleChange}
-                  value={values?.brand.code}
-                  name={"brand"}
+                  value={values?.description}
+                  name={"description"}
                   className={`outline-none border-[#A7A1A1]  w-full border-[1px] rounded-md  px-3 py-[.4rem] flex-grow ${
-                    errors.brand?.code &&
-                    touched.brand?.code &&
+                    errors.description &&
+                    touched.description &&
                     "border-red-500"
                   }`}
+                />
+                <ErrorMessage
+                  name="description"
+                  component="div"
+                  //@ts-ignore
+                  style={{ color: "red" }}
                 />
               </div>
               {/* Select Type */}
               <div className=" col-span-3 ">
                 <h1 className="text-black font-AvenirLTProHeavy text-[13px]">
-                  Store Address <span className="text-red-600">*</span>
+                  Restaurant Address <span className="text-red-600">*</span>
                 </h1>
                 <input
                   disabled={is_disable}
