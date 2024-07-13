@@ -113,6 +113,10 @@ const Home = () => {
 
       console.log("res", res);
       if (res.status === 200) {
+        setCurrentPageInfo((prev) => ({
+          ...prev,
+          totalItem: res.data.length,
+        }));
         setData(res.data);
       }
     } catch (error) {
@@ -124,7 +128,7 @@ const Home = () => {
 
   useEffect(() => {
     loadRestaurantsData();
-  }, []);
+  }, [reload]);
 
   return (
     <div>

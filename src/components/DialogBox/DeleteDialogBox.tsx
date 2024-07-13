@@ -5,7 +5,7 @@ import { deleteRestaurants } from "../../api/deleteRestaurants";
 import { RestaurantsType } from "../../types/types";
 
 interface Props {
-  item: RestaurantsType;
+  item: RestaurantsType | null | undefined;
   onClose: (status?: string) => void;
   showDrawer: boolean;
   type: string;
@@ -53,7 +53,7 @@ const DeleteDialogBOX = (props: Props) => {
 
             <Button
               onClick={async () => {
-                const res = await deleteRestaurants(props.item.id);
+                const res = await deleteRestaurants(props?.item?.id!!);
                 if (res?.status === 200) {
                   toast.success("Restaurant deleted.");
                   props?.onClose("Success");

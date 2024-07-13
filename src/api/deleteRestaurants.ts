@@ -6,7 +6,7 @@ export const deleteRestaurants = async (
   id: string
 ): Promise<AxiosResponse<RestaurantsType>> => {
   const config: AxiosRequestConfig = {
-    method: "put",
+    method: "delete",
     url: `${baseUrl}/api/v1/restaurants/restaurants/${id}`,
   };
   const response: AxiosResponse<RestaurantsType> = await axios(config);
