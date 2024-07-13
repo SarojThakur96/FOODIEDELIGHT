@@ -6,6 +6,11 @@ import { getAllRestaurants } from "../../api/getAllRestaurants";
 import { RestaurantsType } from "../../types/types";
 import DeleteIcon from "../../assets/DeleteIcon.svg";
 import EditIconGrid from "../../assets/EditIconGrid.svg";
+import { ToastContainer } from "react-toastify";
+import CustomModal from "../../components/CustomModal/CustomModal";
+import DeleteDialogBOX from "../../components/DialogBox/DeleteDialogBox";
+import CreateRestaurant from "../../components/CreateRestaurant/CreateRestaurant";
+import CreateIcon from "../../assets/CreateIcon.svg";
 const Home = () => {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState<RestaurantsType[]>([]);
@@ -123,16 +128,52 @@ const Home = () => {
 
   return (
     <div>
+      {/* to show toast messages */}
+      <ToastContainer />
+      {/* custom model for add or edit restaurants */}
+      <CustomModal
+        onClose={() => setShowModal(false)}
+        showModal={showModal}
+        childElement={
+          <CreateRestaurant
+            onClose={(ele) => {
+              if (ele) setReload((prev) => prev + 1);
+              setShowModal(false);
+            }}
+            modalValue={modalValue}
+            headingText={modalType}
+          />
+        }
+      />
+
+      {/* Delete Restaurants dialog box */}
+
+      <DeleteDialogBOX
+        item={modalValue}
+        type={modalType}
+        onClose={(ele) => {
+          if (ele) setReload((prev) => prev + 1);
+          setShowDrawer(false);
+        }}
+        showDrawer={showDrawer}
+      />
       <div className="space-y-4 w-full px-4 relative">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-AvenirLTProHeavy">Restaurants</h1>
-          <h1 className="text-sm font-AvenirLTProHeavy text-[#8B8B8B] flex">
-            <span className="text-black flex items-center ">
-              <div className="w-2 h-2 bg-black rounded-full mx-2" /> Restaurants
-            </span>
+        {/* create restaurant button */}
+        <div
+          onClick={() => {
+            setModalType("");
+            setModalValue(null);
+            setShowModal(true);
+          }}
+          className={` hover:bg-gray-300  ease-in-out duration-300 h-fit py-2 select-none rounded-2xl  shadow-md border-[1px]  flex items-center bg-[#EFEFEF] w-fit gap-2 px-2 cursor-pointer `}
+        >
+          <img src={CreateIcon} className="w-8 h-8" />
+
+          <h1 className="font-AvenirLTProHeavy text-lg  leading-6">
+            Create Restaurant
           </h1>
         </div>
-
+        {/* table for restaurant data */}
         <div className="w-full flex-grow   border-[1px] border-t-[##D7D4D4] rounded-2xl">
           {isLoading ? (
             <div className="h-32 items-center justify-center flex">
