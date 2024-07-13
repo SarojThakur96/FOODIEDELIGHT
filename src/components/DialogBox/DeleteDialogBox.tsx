@@ -1,9 +1,11 @@
 import { Button, Dialog } from "@mui/material";
 import DeleteIcon from "../../assets/DeleteIcon.svg";
 import { toast } from "react-toastify";
+import { deleteRestaurants } from "../../api/deleteRestaurants";
+import { RestaurantsType } from "../../types/types";
 
 interface Props {
-  item: any;
+  item: RestaurantsType;
   onClose: (status?: string) => void;
   showDrawer: boolean;
   type: string;
@@ -26,7 +28,7 @@ const DeleteDialogBOX = (props: Props) => {
             <img src={DeleteIcon} alt="" className="w-10 h-10" />
             <div>
               <h1 className="font-[500] text-black text-xl">
-                Do you want to delete store?
+                Do you want to delete restaurant?
               </h1>
             </div>
           </div>
@@ -51,17 +53,16 @@ const DeleteDialogBOX = (props: Props) => {
 
             <Button
               onClick={async () => {
-                // const res = await deleteStore({
-                //   accessToken,
-                //   id: props?.item.id,
-                // });
-                // if (res?.status === "Success") {
-                //   toast.success(res?.message || "Brand deleted.");
-                //   props?.onClose("Success");
-                // } else {
-                //   toast.error(res?.message || "Brand deleted failed.",{style: {whiteSpace: "pre-wrap"}} );
-                //   props?.onClose();
-                // }
+                const res = await deleteRestaurants(props.item.id);
+                if (res?.status === 200) {
+                  toast.success("Restaurant deleted.");
+                  props?.onClose("Success");
+                } else {
+                  toast.error("Restaurants deleted failed.", {
+                    style: { whiteSpace: "pre-wrap" },
+                  });
+                  props?.onClose();
+                }
               }}
               variant="contained"
               color="primary"

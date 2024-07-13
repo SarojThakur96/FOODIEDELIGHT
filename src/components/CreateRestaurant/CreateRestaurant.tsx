@@ -1,12 +1,12 @@
 import { Button } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import CloseModalIcon from "../../assets/CloseModalIcon.svg";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ErrorMessage, Formik } from "formik";
 import { object, string } from "yup";
-
-import { v4 as uuid } from "uuid";
 import { RestaurantsType } from "../../types/types";
+import { updateRestaurants } from "../../api/updateRestaurants";
+import { createRestaurants } from "../../api/createRestaurants";
 
 type Props = {
   onClose: (status?: string) => void;
@@ -19,7 +19,7 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
 
   const initialValues = {
     name: modalValue?.name || "",
-    description: modalValue?.description,
+    description: modalValue?.description || "",
     address: modalValue?.address || "",
     latitude: modalValue?.latitude || "",
     longitude: modalValue?.longitude || "",
@@ -33,37 +33,38 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
     longitude: string().required("Longitude is required"),
   });
 
-  const _onSubmitHandler = async (formValues: any) => {
-    // setIsLoading(true);
-    console.log(formValues);
+  const _onSubmitHandler = async (
+    formValues: Omit<RestaurantsType, "createdAt" | "id">
+  ) => {
+    setIsLoading(true);
 
-    // if (headingText === "Edit") {
-    //   const res: any = await updateStore({
-    //     values,
-    //     accessToken,
-    //     id: modalValue?.id,
-    //   });
+    if (headingText === "Edit") {
+      const res = await updateRestaurants({
+        ...formValues,
+        id: modalValue?.id!!,
+      });
 
-    //   if (res?.status === "Success") {
-    //     toast.success(res?.message ? res?.message : "Data Updated");
-    //     onClose("Success");
-    //   } else {
-    //     setIsLoading(false);
-    //     toast.error(res?.message ? res?.message : "Something went wrong !!",{style: {whiteSpace: "pre-wrap"}} );
-    //   }
-    // } else {
-    //   const res: any = await createStore({
-    //     values,
-    //     accessToken,
-    //   });
-    //   if (res?.status === "Success") {
-    //     toast.success(res?.message ? res?.message : "Data Inserted");
-    //     onClose("Success");
-    //   } else {
-    //     setIsLoading(false);
-    //     toast.error(res?.message ? res?.message : "Something went wrong !!",{style: {whiteSpace: "pre-wrap"}} );
-    //   }
-    // }
+      if (res?.status === 200) {
+        toast.success("Data Updated");
+        onClose("Success");
+      } else {
+        setIsLoading(false);
+        toast.error("Something went wrong !!", {
+          style: { whiteSpace: "pre-wrap" },
+        });
+      }
+    } else {
+      const res = await createRestaurants(formValues);
+      if (res?.status === 201) {
+        toast.success("Data Inserted");
+        onClose("Success");
+      } else {
+        setIsLoading(false);
+        toast.error("Something went wrong !!", {
+          style: { whiteSpace: "pre-wrap" },
+        });
+      }
+    }
   };
 
   const formikRef: any = useRef(null);
@@ -139,7 +140,7 @@ const CreateRestaurant = ({ onClose, headingText, modalValue }: Props) => {
                   style={{ color: "red" }}
                 />
               </div>
-              {/* Select Type */}
+
               <div className=" col-span-3 ">
                 <h1 className="text-black font-AvenirLTProHeavy text-[13px]">
                   Restaurant Address <span className="text-red-600">*</span>

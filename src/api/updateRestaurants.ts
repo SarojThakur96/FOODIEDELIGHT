@@ -2,18 +2,18 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { RestaurantsType } from "../types/types";
 import { baseUrl } from "../util/constant";
 
-export const createRestaurants = async (
-  data: Omit<RestaurantsType, "createdAt" | "id">
+export const updateRestaurants = async (
+  data: Omit<RestaurantsType, "createdAt">
 ): Promise<AxiosResponse<RestaurantsType>> => {
   const config: AxiosRequestConfig = {
-    method: "post",
-    url: `${baseUrl}/api/v1/restaurants/restaurants`,
+    method: "put",
+    url: `${baseUrl}/api/v1/restaurants/restaurants/${data.id}`,
     headers: {
       "Content-Type": "application/json",
     },
     data: data,
   };
   const response: AxiosResponse<RestaurantsType> = await axios(config);
-  console.log("NewRestaurants: ", response.data);
+  console.log("updateRestaurants: ", response.data);
   return response;
 };
