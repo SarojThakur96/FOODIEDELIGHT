@@ -11,11 +11,12 @@ import CustomModal from "../../components/CustomModal/CustomModal";
 import DeleteDialogBOX from "../../components/DialogBox/DeleteDialogBox";
 import CreateRestaurant from "../../components/CreateRestaurant/CreateRestaurant";
 import CreateIcon from "../../assets/CreateIcon.svg";
+import moment from "moment";
 const Home = () => {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState<RestaurantsType[]>([]);
   const [showModal, setShowModal] = React.useState(false);
-  const [modalValue, setModalValue] = React.useState(null);
+  const [modalValue, setModalValue] = React.useState<RestaurantsType | null>();
   const [modalType, setModalType] = React.useState("");
   const [showDrawer, setShowDrawer] = React.useState(false);
   const [isLoading, setIsloading] = React.useState(false);
@@ -28,32 +29,36 @@ const Home = () => {
 
   const columns: any[] = [
     { id: "id", label: "Sr. No.", minWidth: 80, align: "left" },
-    { id: "name", label: "Name", minWidth: 200, align: "center" },
-    { id: "description", label: "Description", minWidth: 300, align: "left" },
+    { id: "name", label: "Restaurant Name", minWidth: 150, align: "center" },
+    { id: "description", label: "Description", minWidth: 200, align: "left" },
     {
-      id: "url",
-      label: "Hidden Link",
+      id: "address",
+      label: "Address",
+      minWidth: 180,
+      align: "left",
+    },
+
+    {
+      id: "latitude",
+      label: "Latitude",
       minWidth: 120,
       align: "left",
     },
-    { id: "action", label: "Action", minWidth: 130, align: "center" },
+    {
+      id: "longitude",
+      label: "Longitude",
+      minWidth: 120,
+      align: "left",
+    },
+    {
+      id: "createdAt",
+      label: "Created At",
+      minWidth: 120,
+      align: "left",
+    },
+    { id: "action", label: "Action", minWidth: 120, align: "center" },
   ];
-  const createData = (item: any, index: number) => {
-    const Title = (
-      <div>
-        <h1
-          className="underline decoration-blue-[#0061bb] text-[#0061bb] cursor-pointer "
-          onClick={() => {
-            setModalValue(item);
-            setShowModal(true);
-            setModalType("edit");
-            // View and Edit Modal
-          }}
-        >
-          {item?.title}
-        </h1>
-      </div>
-    );
+  const createData = (item: RestaurantsType, index: number) => {
     const action = (
       <div className="flex space-x-[10px] justify-center ">
         {/* EditIconGrid */}
@@ -63,20 +68,22 @@ const Home = () => {
             className="cursor-pointer w-4 h-4"
             onClick={() => {
               setModalType("Edit");
-              // setModalValue(item);
+              setModalValue(item);
               setShowModal(true);
             }}
           />
         </Tooltip>
+
+        {/* Delete Icon Grid  */}
+
         <Tooltip title="Delete" placement="bottom">
-          {/* Call the delete function  */}
           <img
             src={DeleteIcon}
             className="cursor-pointer w-4 h-4"
             onClick={() => {
               setShowDrawer(true);
               setModalType("delete");
-              // setModalValue(item);
+              setModalValue(item);
             }}
           />
         </Tooltip>
@@ -84,27 +91,20 @@ const Home = () => {
     );
 
     return {
+      ...item,
       key: item?.id,
       idx: index + 1,
-      Brands: item?.brand_name,
-      address: item?.address,
-      type: item?.loyalty_type_name,
-
-      title: Title,
+      createdAt: moment(item?.createdAt).format("lll"),
       action,
-      isActive: item?.is_active,
-      ...item,
     };
   };
 
-  const rows = [
-    ...data?.map((item: any, index: number) => createData(item, index)),
-  ];
+  const rows = [...data?.map((item, index: number) => createData(item, index))];
 
   const gWidth =
     window.screen.height > 864
-      ? window.screen.height * 0.4
-      : window.screen.height * 0.35;
+      ? window.screen.height * 0.6
+      : window.screen.height * 0.5;
 
   const loadRestaurantsData = async () => {
     setIsloading(true);

@@ -3,7 +3,8 @@ export type RestaurantsType = {
   name: string;
   address: string;
   description: string;
-  image: string;
+  latitude: string;
+  longitude: string;
   id: string;
 };
 
